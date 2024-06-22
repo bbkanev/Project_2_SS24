@@ -14,15 +14,24 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.wider-container {
+    width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .center-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .center-content a {
-            margin: 0 10px;
+    margin: 0 10px;
 }
 
 h1 {

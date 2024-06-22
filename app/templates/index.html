@@ -14,13 +14,59 @@
     {% block content %}
     <div class="center-content">
         {% if user %}
-            <p class="mr-3">Hello, {{ user.id }}!</p>
+            <p class="mr-3">Hello, {{ user['username'] }}!</p>
             <a href="{{ url_for('main.logout') }}" class="btn btn-danger">Logout</a>
         {% else %}
             <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
             <a href="{{ url_for('main.register') }}" class="btn btn-secondary">Register</a>
         {% endif %}
     </div>
+
+    <div class="card mb-4 wider-container">
+        <div class="card-header">
+            <h2>Published Tests</h2>
+        </div>
+        <div class="card-body">
+            {% if published_tests %}
+                <ul class="list-group">
+                    {% for test in published_tests %}
+                        <li class="list-group-item">
+                            <strong>{{ test.name }}</strong> - {{ test.time }} minutes
+                            <a href="{{ url_for('main.attempt_test', test_id=test.id) }}" class="btn btn-primary btn-sm float-right">Attempt</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No published tests available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user %}
+    <div class="card mb-4 wider-container">
+        <div class="card-header">
+            <h2>Your Tests</h2>
+        </div>
+        <div class="card-body">
+            {% if user_tests %}
+                <ul class="list-group">
+                    {% for test in user_tests %}
+                        <li class="list-group-item">
+                            <strong>{{ test.name }}</strong>  - {{ test.time }} minutes
+                            <div class="float-right">
+                                <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You have not created any tests yet.</p>
+            {% endif %}
+        </div>
+        <a href="{{ url_for('main.add_test') }}" class="btn btn-primary mt-3">Add Test</a>
+    </div>
+    {% endif %}
     {% endblock %}
 </body>
 </html>

@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import db, User
+from .models import db, User, Test
 
 import re
 
@@ -65,3 +65,10 @@ class Logic:
         if not re.match(pattern, email):
             return False, "Invalid email address"
         return True, "Email is valid"
+
+    @staticmethod
+    def add_new_test(name, time, is_published, created_by):
+        new_test = Test(name=name, time=time, is_published=is_published, created_by=created_by)
+        db.session.add(new_test)
+        db.session.commit()
+        return True, "Test added successfully"
