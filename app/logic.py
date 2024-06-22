@@ -86,3 +86,13 @@ class Logic:
         questions = Question.query.filter_by(test_id=test_id).all()
         total_score = sum([question.points for question in questions])
         return total_score
+
+    @staticmethod
+    def delete_question(question_id):
+        question = Question.query.get(question_id)
+        test_id = question.test_id
+        if question:
+            db.session.delete(question)
+            db.session.commit()
+            return True, "Question deleted successfully", test_id
+        return False, "Question not found"

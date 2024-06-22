@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from .models import Test
+from .models import Test, Question
 from .logic import Logic
 from . import db
 
@@ -48,6 +48,7 @@ def login():
             flash(user, 'danger')
     return render_template('login.html')
 
+
 @main.route('/add_test', methods=['GET', 'POST'])
 def add_test():
     user = session.get('user')
@@ -69,6 +70,10 @@ def add_test():
 
 @main.route('/edit_test/<uuid:test_id>', methods=['GET', 'POST'])
 def edit_test(test_id):
+    user = session.get('user')
+    if not user:
+        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
     test = Test.query.get(test_id)
     total_points = Logic.calculate_total_score(test_id)
     if not test:
@@ -85,6 +90,10 @@ def edit_test(test_id):
 
 @main.route('/add_question/<uuid:test_id>', methods=['GET', 'POST'])
 def add_question(test_id):
+    user = session.get('user')
+    if not user:
+        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
     if request.method == 'POST':
         question_text = request.form['question']
         answer = request.form['answer']
@@ -101,9 +110,43 @@ def add_question(test_id):
     return render_template('add_question.html', test_id=test_id)
 
 
+@main.route('/edit_question/<uuid:question_id>', methods=['GET', 'POST'])
+def edit_question(question_id):
+    user = session.get('user')
+    if not user:
+        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+    question = Question.query.get(question_id)
+    if not question:
+        flash("Error in finding the question", 'danger')
+        return redirect(url_for('main.home'))
+    if request.method == 'POST':
+        question.question = request.form['question']
+        question.answer = request.form['answer']
+        question.option1 = request.form['option1']
+        question.option2 = request.form['option2']
+        question.option3 = request.form['option3']
+        question.points = request.form['points']
+        db.session.commit()
+        flash('Question updated successfully', 'success')
+        return redirect(url_for('main.edit_test', test_id=question.test_id))
+
+    return render_template('edit_question.html', question=question)
+
+
+@main.route('/delete_question/<uuid:question_id>', methods=['POST'])
+def delete_question(question_id):
+    success, message, test_id = Logic.delete_question(question_id)
+    if success:
+        flash(message, 'success')
+        return redirect(url_for('main.edit_test', test_id=test_id))
+    else:
+        flash(message, 'danger')
+        return redirect(url_for('main.home'))
+
+
 @main.route('/logout')
 def logout():
     session.pop('user', None)
     flash("Logged out successfully", 'success')
     return redirect(url_for('main.home'))
-
