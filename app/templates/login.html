@@ -18,6 +18,7 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <button type="submit">Login</button>
+            <a href="{{ url_for('main.home') }}" class="btn btn-secondary btn-sm mt-1">Back</a>
         </form>
         <p>If you don't have account click <a href="register">here</a></p>
         {% endblock %}
