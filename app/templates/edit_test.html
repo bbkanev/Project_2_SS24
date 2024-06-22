@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Test - QuickQuiz</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1 class="text-center">Edit Test</h1>
+    {% extends "message.html" %}
+    {% block content %}
+    <div class="wider-container">
+        <form action="{{ url_for('main.edit_test', test_id=test.id) }}" method="post">
+            <div class="form-group">
+                <label for="name">Test Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ test.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Time (in minutes)</label>
+                <input type="number" class="form-control" id="time" name="time" value="{{ test.time }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Test</button>
+        </form>
+        <h2 class="mt-5">Manage Questions</h2>
+        <a href="{{ url_for('main.add_question', test_id=test.id) }}" class="btn btn-success mt-3">Add Question</a>
+        {% if test.questions %}
+            <ul class="list-group mt-3">
+                {% for question in test.questions %}
+                    <li class="list-group-item">
+                        <strong>{{ question.question }}</strong> - {{question.points}} points
+                        <div class="float-right">
+                            <a href="{{ url_for('main.home', question_id=question.id) }}" class="btn btn-success btn-sm">Edit</a>
+                            <a href="{{ url_for('main.home', question_id=question.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        <strong>Total Points: {{total_points}}</strong>
+        {% else %}
+            <p>No questions available for this test.</p>
+        {% endif %}
+    </div>
+    {% endblock %}
+</body>
+</html>

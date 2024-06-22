@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import db, User, Test
+from .models import db, User, Test, Question
 
 import re
 
@@ -72,3 +72,17 @@ class Logic:
         db.session.add(new_test)
         db.session.commit()
         return True, "Test added successfully"
+
+    @staticmethod
+    def add_new_question(question, answer, option1, option2, option3, points, test_id):
+        new_question = Question(question=question, answer=answer, option1=option1, option2=option2, option3=option3,
+                                points=points, test_id=test_id)
+        db.session.add(new_question)
+        db.session.commit()
+        return True, "Question added successfully"
+
+    @staticmethod
+    def calculate_total_score(test_id):
+        questions = Question.query.filter_by(test_id=test_id).all()
+        total_score = sum([question.points for question in questions])
+        return total_score

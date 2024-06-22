@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from .models import Test
 from .logic import Logic
+from . import db
 
 main = Blueprint('main', __name__)
 
@@ -64,6 +65,40 @@ def add_test():
         else:
             flash(message, 'danger')
     return render_template('add_test.html', user=user)
+
+
+@main.route('/edit_test/<uuid:test_id>', methods=['GET', 'POST'])
+def edit_test(test_id):
+    test = Test.query.get(test_id)
+    total_points = Logic.calculate_total_score(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+    if request.method == 'POST':
+        test.name = request.form['name']
+        test.time = request.form['time']
+        db.session.commit()
+        flash('Test updated successfully', 'success')
+        return redirect(url_for('main.edit_test', test_id=test_id, total_points=total_points))
+    return render_template('edit_test.html', test=test, total_points=total_points)
+
+
+@main.route('/add_question/<uuid:test_id>', methods=['GET', 'POST'])
+def add_question(test_id):
+    if request.method == 'POST':
+        question_text = request.form['question']
+        answer = request.form['answer']
+        option1 = request.form['option1']
+        option2 = request.form['option2']
+        option3 = request.form['option3']
+        points = request.form['points']
+        success, message = Logic.add_new_question(question_text, answer, option1, option2, option3, points, test_id)
+        if success:
+            flash(message, 'success')
+            return redirect(url_for('main.edit_test', test_id=test_id))
+        else:
+            flash(message, 'danger')
+    return render_template('add_question.html', test_id=test_id)
 
 
 @main.route('/logout')

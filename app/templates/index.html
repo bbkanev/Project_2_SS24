@@ -54,7 +54,8 @@
                         <li class="list-group-item">
                             <strong>{{ test.name }}</strong>  - {{ test.time }} minutes
                             <div class="float-right">
-                                <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-success btn-sm">Edit</a>
+                                <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-warning btn-sm">Publish</a>
                                 <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-danger btn-sm">Delete</a>
                             </div>
                         </li>
