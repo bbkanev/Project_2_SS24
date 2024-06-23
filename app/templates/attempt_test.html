@@ -19,7 +19,7 @@
         <p><strong>Number of Questions:</strong> {{ test.questions | length }}</p>
         {% if test.questions | length > 0 %}
         <div class="mt-4">
-            <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-primary">Attempt the Test</a>
+            <a href="{{ url_for('main.start_test', test_id=test.id) }}" class="btn btn-primary">Attempt the Test</a>
             <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-success">My Results</a>
         </div>
         {% endif %}

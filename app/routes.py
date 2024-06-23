@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from .models import Test, Question
+from .models import Test, Question, Attempt
 from .logic import Logic
 from . import db
+from datetime import datetime
+import uuid
 
 main = Blueprint('main', __name__)
 
@@ -196,6 +198,62 @@ def attempt_test(test_id):
     total_points = Logic.calculate_total_score(test_id)
 
     return render_template('attempt_test.html', test=test, total_points=total_points)
+
+
+@main.route('/start_test/<uuid:test_id>')
+def start_test(test_id):
+    user = session.get('user')
+    if not user:
+        flash("You need to login first", 'danger')
+        return redirect(url_for('main.login'))
+
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    total_points = Logic.calculate_total_score(test_id)
+
+    for question in test.questions:
+        question.shuffled_options = Logic.shuffle_options(question)
+
+    session['start_time'] = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
+
+    return render_template('start_test.html', test=test, total_points=total_points)
+
+
+@main.route('/submit_test/<uuid:test_id>', methods=['POST'])
+def submit_test(test_id):
+    user = session.get('user')
+    if not user:
+        flash("You need to log in to submit the test", 'danger')
+        return redirect(url_for('main.login'))
+
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    max_score = Logic.calculate_total_score(test_id)
+    total_score = 0
+
+    # Calculate total score
+    for question in test.questions:
+        selected_answer = request.form.get(f'answer_{question.id}')
+        if selected_answer and selected_answer == question.answer:
+            total_score += question.points
+
+    # Calculate time taken
+    start_time_str = session.pop('start_time', None)
+    finish_time, time_taken = Logic.calculate_time_taken(start_time_str)
+
+    # Save the attempt
+    success, message = Logic.save_attempt(test_id, user['id'], finish_time, time_taken, total_score, max_score)
+    if success:
+        flash(message, 'success')
+
+    return redirect(url_for('main.attempt_test', test_id=test_id))
+
 
 @main.route('/logout')
 def logout():

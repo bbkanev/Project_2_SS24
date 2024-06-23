@@ -43,6 +43,7 @@ class Attempt(db.Model):
     test_id = db.Column(UUID(as_uuid=True), db.ForeignKey('test.id'), nullable=False)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False)
     finish_time = db.Column(db.DateTime, nullable=False)
+    time_taken = db.Column(db.Float, nullable=True)
     score = db.Column(db.Integer, nullable=False)
 
     test = db.relationship('Test', back_populates='attempts')

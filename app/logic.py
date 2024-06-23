@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import db, User, Test, Question
+from .models import db, User, Test, Question, Attempt
+from datetime import datetime
 
+import random
 import re
 
 
@@ -100,3 +102,29 @@ class Logic:
             db.session.commit()
             return True, "Question deleted successfully", test_id
         return False, "Question not found"
+
+    @staticmethod
+    def shuffle_options(question):
+        options = [question.answer, question.option1, question.option2, question.option3]
+        options = [option for option in options if option]  # Remove any None values
+        random.shuffle(options)
+        return options
+
+    @staticmethod
+    def save_attempt(test_id, user_id, finish_time, time_taken, score, max_score):
+        new_attempt = Attempt(test_id=test_id, user_id=user_id, finish_time=finish_time,
+                              time_taken=time_taken, score=score)
+        db.session.add(new_attempt)
+        db.session.commit()
+        return True, f"Test submitted successfully! Your score is {score}/{max_score}', 'success'"
+
+    @staticmethod
+    def calculate_time_taken(start_time_str):
+        if start_time_str:
+            start_time = datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S.%f')
+            finish_time = datetime.utcnow()
+            time_taken = (finish_time - start_time).total_seconds()
+        else:
+            finish_time = datetime.utcnow()
+            time_taken = None
+        return finish_time, time_taken
