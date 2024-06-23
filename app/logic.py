@@ -128,3 +128,16 @@ class Logic:
             finish_time = datetime.utcnow()
             time_taken = None
         return finish_time, time_taken
+
+    @staticmethod
+    def get_leaderboard(attempts):
+        best_attempts = {}
+        for attempt in attempts:
+            if attempt.user_id not in best_attempts or (attempt.score > best_attempts[attempt.user_id].score) or (
+                    attempt.score == best_attempts[attempt.user_id].score and attempt.time_taken <
+                    best_attempts[attempt.user_id].time_taken):
+                best_attempts[attempt.user_id] = attempt
+
+        results = list(best_attempts.values())
+
+        return results

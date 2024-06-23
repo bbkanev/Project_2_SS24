@@ -270,8 +270,22 @@ def test_results(test_id):
     # Get login user results
     results = Attempt.query.filter_by(test_id=test_id, user_id=user['id']).order_by(Attempt.score.desc(),
                                                                                     Attempt.time_taken).all()
-    
+
     return render_template('test_results.html', test=test, results=results)
+
+
+@main.route('/leaderboard/<uuid:test_id>', methods=['GET'])
+def leaderboard(test_id):
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    attempts = Attempt.query.filter_by(test_id=test_id).order_by(Attempt.score.desc(), Attempt.time_taken).all()
+
+    results = Logic.get_leaderboard(attempts)
+
+    return render_template('leaderboard.html', test=test, results=results)
 
 
 @main.route('/logout')

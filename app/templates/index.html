@@ -34,7 +34,7 @@
                             <strong>{{ test.name }}</strong> - {{ test.time }} minutes ({{ test.author }})
                             <div class="float-right">
                                 <a href="{{ url_for('main.attempt_test', test_id=test.id) }}" class="btn btn-primary btn-sm">Attempt</a>
-                                <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-success btn-sm">Leaderboard</a>
+                                <a href="{{ url_for('main.leaderboard', test_id=test.id) }}" class="btn btn-success btn-sm">Leaderboard</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -65,6 +65,7 @@
                                         <button type="submit" class="btn btn-warning btn-sm">Publish</button>
                                     {% endif %}
                                 </form>
+                                <a href="{{ url_for('main.leaderboard', test_id=test.id) }}" class="btn btn-info btn-sm">Leaderboard</a>
                                 <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-danger btn-sm">Delete</a>
                             </div>
                         </li>
