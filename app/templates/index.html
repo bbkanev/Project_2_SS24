@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1 class="text-center">Welcome to QuickQuiz</h1>
+    <h1 class="text-center">Welcome to Quick Tests</h1>
     {% extends "message.html" %}
     {% block content %}
     <div class="center-content">
@@ -31,8 +31,8 @@
                 <ul class="list-group">
                     {% for test in published_tests %}
                         <li class="list-group-item">
-                            <strong>{{ test.name }}</strong> - {{ test.time }} minutes
-                            <a href="{{ url_for('main.attempt_test', test_id=test.id) }}" class="btn btn-primary btn-sm float-right">Attempt</a>
+                            <strong>{{ test.name }}</strong> - {{ test.time }} minutes ({{ test.author }})
+                            <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-primary btn-sm float-right">Attempt</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -55,7 +55,13 @@
                             <strong>{{ test.name }}</strong>  - {{ test.time }} minutes
                             <div class="float-right">
                                 <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-success btn-sm">Edit</a>
-                                <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-warning btn-sm">Publish</a>
+                                <form action="{{ url_for('main.publish_test', test_id=test.id) }}" method="post" class="d-inline">
+                                    {% if test.is_published %}
+                                        <button type="submit" class="btn btn-primary btn-sm">Withdraw</button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-warning btn-sm">Publish</button>
+                                    {% endif %}
+                                </form>
                                 <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-danger btn-sm">Delete</a>
                             </div>
                         </li>

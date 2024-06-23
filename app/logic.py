@@ -82,6 +82,10 @@ class Logic:
         return True, "Question added successfully"
 
     @staticmethod
+    def get_user_by_id(user_id):
+        return User.query.get(user_id)
+
+    @staticmethod
     def calculate_total_score(test_id):
         questions = Question.query.filter_by(test_id=test_id).all()
         total_score = sum([question.points for question in questions])

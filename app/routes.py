@@ -9,12 +9,21 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def home():
     user = session.get('user')
-    published_tests = Test.query.filter_by(is_published=True).all()
 
     if user:
         user_tests = Test.query.filter_by(created_by=user['id']).all()
+        published_tests = Test.query.filter(Test.is_published, Test.created_by != user['id']).all()
+        # Getting the creator for each published test
+        for test in published_tests:
+            test.author = Logic.get_user_by_id(test.created_by).username
+
     else:
         user_tests = []
+        published_tests = Test.query.filter_by(is_published=True).all()
+        # Getting the creator for each published test
+        for test in published_tests:
+            test.author = Logic.get_user_by_id(test.created_by).username
+
     return render_template('index.html', user=user, published_tests=published_tests, user_tests=user_tests)
 
 
@@ -52,9 +61,11 @@ def login():
 @main.route('/add_test', methods=['GET', 'POST'])
 def add_test():
     user = session.get('user')
+
     if not user:
         flash("You need to login first", 'danger')
         return redirect(url_for('main.login'))
+
     if request.method == 'POST':
         name = request.form['name']
         time = request.form['time']
@@ -71,14 +82,17 @@ def add_test():
 @main.route('/edit_test/<uuid:test_id>', methods=['GET', 'POST'])
 def edit_test(test_id):
     user = session.get('user')
-    if not user:
-        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
     test = Test.query.get(test_id)
     total_points = Logic.calculate_total_score(test_id)
+
     if not test:
         flash("Test not found", 'danger')
         return redirect(url_for('main.home'))
+
+    if not user or test.created_by != user['id']:
+        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
     if request.method == 'POST':
         test.name = request.form['name']
         test.time = request.form['time']
@@ -91,7 +105,9 @@ def edit_test(test_id):
 @main.route('/add_question/<uuid:test_id>', methods=['GET', 'POST'])
 def add_question(test_id):
     user = session.get('user')
-    if not user:
+    current_test = Test.query.get(test_id)
+
+    if not user or current_test.created_by != user['id']:
         return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
     if request.method == 'POST':
@@ -113,13 +129,16 @@ def add_question(test_id):
 @main.route('/edit_question/<uuid:question_id>', methods=['GET', 'POST'])
 def edit_question(question_id):
     user = session.get('user')
-    if not user:
-        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
     question = Question.query.get(question_id)
     if not question:
         flash("Error in finding the question", 'danger')
         return redirect(url_for('main.home'))
+
+    current_test = Test.query.get(question.test_id)
+    if not user or current_test.created_by != user['id']:
+        return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
     if request.method == 'POST':
         question.question = request.form['question']
         question.answer = request.form['answer']
@@ -143,6 +162,23 @@ def delete_question(question_id):
     else:
         flash(message, 'danger')
         return redirect(url_for('main.home'))
+
+
+@main.route('/publish_test/<uuid:test_id>', methods=['POST'])
+def publish_test(test_id):
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    if test.is_published:
+        flash("Test withdraw successfully", 'success')
+    else:
+        flash("Test published successfully", 'warning')
+
+    test.is_published = not test.is_published
+    db.session.commit()
+    return redirect(url_for('main.home'))
 
 
 @main.route('/logout')
