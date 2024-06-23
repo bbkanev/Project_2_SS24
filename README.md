@@ -93,7 +93,7 @@ https://www.sqlite.org/download.html
     Option2: Berlin
     Points: 5
     ```
-8. Publish the test by clicking the publish button.
+8. Go back to the home and publish the test by clicking the publish button.
 9. Log out and register a new user.
     ```
     http://127.0.0.1/logout
@@ -104,7 +104,7 @@ https://www.sqlite.org/download.html
     email: test2@test.com
     ```
    
-10. Go and attempt the test Geography.
+10. Go and attempt 2-3 times the Geography test.
 ![img.png](Images/img.png)
 11. Submitting the test and go to my results to see the results.
 ![img.png](Images/img1.png)
