@@ -32,7 +32,10 @@
                     {% for test in published_tests %}
                         <li class="list-group-item">
                             <strong>{{ test.name }}</strong> - {{ test.time }} minutes ({{ test.author }})
-                            <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-primary btn-sm float-right">Attempt</a>
+                            <div class="float-right">
+                                <a href="{{ url_for('main.attempt_test', test_id=test.id) }}" class="btn btn-primary btn-sm">Attempt</a>
+                                <a href="{{ url_for('main.edit_test', test_id=test.id) }}" class="btn btn-success btn-sm">Leaderboard</a>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>

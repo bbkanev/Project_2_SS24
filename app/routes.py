@@ -181,6 +181,22 @@ def publish_test(test_id):
     return redirect(url_for('main.home'))
 
 
+@main.route('/attempt_test/<uuid:test_id>')
+def attempt_test(test_id):
+    user = session.get('user')
+    if not user:
+        flash("You need to login first", 'danger')
+        return redirect(url_for('main.login'))
+
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    total_points = Logic.calculate_total_score(test_id)
+
+    return render_template('attempt_test.html', test=test, total_points=total_points)
+
 @main.route('/logout')
 def logout():
     session.pop('user', None)

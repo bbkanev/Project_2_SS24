@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attempt Test - QuickQuiz</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1 class="text-center">Attempt Test</h1>
+    {% extends "message.html" %}
+    {% block content %}
+    <div class="center-box">
+        <h2>{{ test.name }}</h2>
+        <p><strong>Maximum Points:</strong> {{ total_points }}</p>
+        <p><strong>Time:</strong> {{ test.time }} minutes</p>
+        <p><strong>Number of Questions:</strong> {{ test.questions | length }}</p>
+        {% if test.questions | length > 0 %}
+        <div class="mt-4">
+            <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-primary">Attempt the Test</a>
+            <a href="{{ url_for('main.home', test_id=test.id) }}" class="btn btn-success">My Results</a>
+        </div>
+        {% endif %}
+        <a href="{{ url_for('main.home') }}" class="btn btn-secondary mt-3">Back</a>
+    </div>
+    {% endblock %}
+</body>
+</html>
