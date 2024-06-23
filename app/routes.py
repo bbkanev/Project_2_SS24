@@ -255,6 +255,25 @@ def submit_test(test_id):
     return redirect(url_for('main.attempt_test', test_id=test_id))
 
 
+@main.route('/test_results/<uuid:test_id>')
+def test_results(test_id):
+    user = session.get('user')
+    if not user:
+        flash("You need to login first", 'danger')
+        return redirect(url_for('main.login'))
+
+    test = Test.query.get(test_id)
+    if not test:
+        flash("Test not found", 'danger')
+        return redirect(url_for('main.home'))
+
+    # Get login user results
+    results = Attempt.query.filter_by(test_id=test_id, user_id=user['id']).order_by(Attempt.score.desc(),
+                                                                                    Attempt.time_taken).all()
+    
+    return render_template('test_results.html', test=test, results=results)
+
+
 @main.route('/logout')
 def logout():
     session.pop('user', None)
