@@ -4,6 +4,20 @@
 
 QuickQuiz is a simple quiz application that allows users to register, log in, create quizzes, add questions to quizzes, and attempt quizzes. This project uses Flask, SQLAlchemy, and pytest for testing.
 
+## Requirements
+
+Use need to have installed the sqlite3 database before running the application. You can check if you have it installed by running the following command:
+```bash
+sqlite3 -version
+```
+Simple output:
+```
+3.36.0 2021-06-18 18:36:39 3bfa9cc97da105f7c6f3b9e5f9b6
+```
+if you don't have it installed you can install it by following the instructions on the following link:
+https://www.sqlite.org/download.html
+
+
 ## Installation
 
 1. **Clone the repository:**
@@ -39,7 +53,7 @@ QuickQuiz is a simple quiz application that allows users to register, log in, cr
    py app.py
    ```
 2. Open your browser and navigate to
-    ```commandline
+    ```
     http://127.0.0.1:5000/
     ```
 
@@ -59,7 +73,7 @@ QuickQuiz is a simple quiz application that allows users to register, log in, cr
     http://127.0.0.1:5000/login
     ```
    
-5. Create a new test and add questions to it.
+5. Create a new test.
     ```
     http://127.0.0.1:5000/add_test
     ```
