@@ -3,7 +3,6 @@ from .models import Test, Question, Attempt
 from .logic import Logic
 from . import db
 from datetime import datetime
-import uuid
 
 main = Blueprint('main', __name__)
 
