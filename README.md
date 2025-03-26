@@ -115,4 +115,14 @@ https://www.sqlite.org/download.html
     ```bash
     pytest
     ```
+    
+# Docker Comands
+1. **Build the image:**
+   ```bash
+   docker build -t quickquiz .
+   ```
+2. **Run the container:**
+   ```bash
+    docker run -d -p 5000:5000 quickquiz
+    ```
 
